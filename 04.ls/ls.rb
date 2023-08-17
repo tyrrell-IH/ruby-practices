@@ -15,12 +15,12 @@ def select_options
   opt.on('-a') { |v| params[:a] = v }
   opt.on('-r') { |v| params[:r] = v }
   opt.on('-l') { |v| params[:l] = v }
-  params[:dir] = opt.parse!(ARGV)[0]
+  opt.parse!
   params
 end
 
-def acquire_files(selected_dir:, a_option: false, r_option: false)
-  files = a_option ? Dir.glob('*', File::FNM_DOTMATCH, base: selected_dir) : Dir.glob('*', base: selected_dir)
+def acquire_files(a_option: false, r_option: false)
+  files = a_option ? Dir.glob('*', File::FNM_DOTMATCH) : Dir.glob('*')
   r_option ? files.reverse : files
 end
 
@@ -111,7 +111,7 @@ end
 
 def main(column_number)
   options = select_options
-  files = acquire_files(selected_dir: options[:dir], a_option: options[:a], r_option: options[:r])
+  files = acquire_files(a_option: options[:a], r_option: options[:r])
   if options[:l]
     [get_file_mode(files), get_link_number(files),
      get_user_name(files), get_group_name(files),
