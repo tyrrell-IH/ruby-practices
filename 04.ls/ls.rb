@@ -2,6 +2,8 @@
 # frozen_string_literal: true
 
 require 'optparse'
+require 'etc'
+require 'date'
 require 'debug'
 
 NUMBER_OF_COLUMNS = 3
@@ -12,6 +14,7 @@ def select_options
   opt = OptionParser.new
   opt.on('-a') { |v| params[:a] = v }
   opt.on('-r') { |v| params[:r] = v }
+  opt.on('-l') { |v| params[:l] = v }
   params[:dir] = opt.parse!(ARGV)[0]
   params
 end
@@ -57,12 +60,66 @@ def get_permission(oct_mode)
   check_stickybit_sgid_suid(oct_mode, permission)
 end
 
-def get_file_mode(file)
+def get_file_mode(files)
   file_type = { '04' => 'd', '10' => '-', '12' => 'l' }
-  oct_mode = get_oct_mode(file)
-  "#{file_type[oct_mode[0..1]]}#{get_permission(oct_mode)}"
+  files.map do |file|
+    oct_mode = get_oct_mode(file)
+    "#{file_type[oct_mode[0..1]]}#{get_permission(oct_mode)}"
+  end
 end
 
-options = select_options
-files = acquire_files(selected_dir: options[:dir], a_option: options[:a], r_option: options[:r])
-puts generate_files_for_display(files, NUMBER_OF_COLUMNS)
+def get_link_number(files)
+  max = files.map { |file| File.lstat(file).nlink.to_s }.max_by(&:length).length
+  files.map do |file|
+    File.lstat(file).nlink.to_s.rjust(max + 1)
+  end
+end
+
+def get_user_name(files)
+  max = files.map { |file| Etc.getpwuid(File.lstat(file).uid).name }.max_by(&:length).length
+  files.map do |file|
+    Etc.getpwuid(File.lstat(file).uid).name.ljust(max + 1)
+  end
+end
+
+def get_group_name(files)
+  max = files.map { |file| Etc.getgrgid(File.lstat(file).gid).name }.max_by(&:length).length
+  files.map do |file|
+    Etc.getgrgid(File.lstat(file).gid).name.ljust(max + 1)
+  end
+end
+
+def get_byte(files)
+  max = files.map { |file| File.lstat(file).size.to_s }.max_by(&:length).length
+  files.map do |file|
+    File.lstat(file).size.to_s.rjust(max)
+  end
+end
+
+def get_last_modified_date(files)
+  files.map do |file|
+    modified_time = File.lstat(file).mtime
+    modified_time.to_date.between?(Date.today.prev_month(6), Date.today) ? modified_time.strftime('%b %e %H:%M') : modified_time.strftime('%b %e  %Y')
+  end
+end
+
+def get_file_name(files)
+  files.map do |file|
+    File.lstat(file).symlink? ? "#{file} -> #{File.readlink(file)}" : file
+  end
+end
+
+def main(column_number)
+  options = select_options
+  files = acquire_files(selected_dir: options[:dir], a_option: options[:a], r_option: options[:r])
+  if options[:l]
+    [get_file_mode(files), get_link_number(files),
+     get_user_name(files), get_group_name(files),
+     get_byte(files), get_last_modified_date(files),
+     get_file_name(files)].transpose.map { |file| file.join(' ') }.unshift("total #{files.inject(0) { |i, file| i + File.lstat(file).blocks }}")
+  else
+    generate_files_for_display(files, column_number)
+  end
+end
+
+puts main(NUMBER_OF_COLUMNS)
