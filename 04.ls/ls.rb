@@ -113,11 +113,8 @@ def get_byte(file)
 end
 
 def get_last_modified_date(file)
-  if File.lstat(file).mtime.to_date.between?(Date.today.prev_month(6), Date.today)
-    File.lstat(file).mtime.strftime('%b %e %H:%M')
-  else
-    File.lstat(file).mtime.strftime('%b %e  %Y')
-  end
+  modified_time = File.lstat(file).mtime
+  modified_time.to_date.between?(Date.today.prev_month(6), Date.today) ? modified_time.strftime('%b %e %H:%M') : modified_time.strftime('%b %e  %Y')
 end
 
 def get_file_name(file)
