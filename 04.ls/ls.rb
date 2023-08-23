@@ -83,15 +83,6 @@ def get_file_mode(file)
   "#{file_type[oct_mode[0..1]]}#{get_permission(oct_mode)}"
 end
 
-def get_max_length(files)
-  max = {}
-  max[:link] = files.map { |file| File.lstat(file).nlink.to_s }.max_by(&:length).length
-  max[:user] = files.map { |file| Etc.getpwuid(File.lstat(file).uid).name }.max_by(&:length).length
-  max[:group] = files.map { |file| Etc.getgrgid(File.lstat(file).gid).name }.max_by(&:length).length
-  max[:byte] = files.map { |file| File.lstat(file).size.to_s }.max_by(&:length).length
-  max
-end
-
 def get_link_number(file)
   File.lstat(file).nlink.to_s
 end
@@ -108,6 +99,22 @@ def get_byte(file)
   File.lstat(file).size.to_s
 end
 
+def get_link_number_width(files)
+  files.map { |file| get_link_number(file) }.max_by(&:length).length
+end
+
+def get_user_name_width(files)
+  files.map { |file| get_user_name(file) }.max_by(&:length).length
+end
+
+def get_group_name_width(files)
+  files.map { |file| get_group_name(file) }.max_by(&:length).length
+end
+
+def get_byte_width(files)
+  files.map { |file| get_byte(file) }.max_by(&:length).length
+end
+
 def get_last_modified_date(file)
   modified_time = File.lstat(file).mtime
   modified_time.to_date.between?(Date.today.prev_month(6), Date.today) ? modified_time.strftime('%b %e %H:%M') : modified_time.strftime('%b %e  %Y')
@@ -118,13 +125,12 @@ def get_file_name(file)
 end
 
 def generate_display_l_option(files)
-  max = get_max_length(files)
   files.map do |file|
     [get_file_mode(file),
-     get_link_number(file).rjust(max[:link] + 1),
-     get_user_name(file).ljust(max[:user] + 1),
-     get_group_name(file).ljust(max[:group] + 1),
-     get_byte(file).rjust(max[:byte]),
+     get_link_number(file).rjust(get_link_number_width(files) + 1),
+     get_user_name(file).ljust(get_user_name_width(files) + 1),
+     get_group_name(file).ljust(get_group_name_width(files) + 1),
+     get_byte(file).rjust(get_byte_width(files)),
      get_last_modified_date(file),
      get_file_name(file)].join(' ')
   end
