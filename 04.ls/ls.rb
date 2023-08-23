@@ -9,16 +9,16 @@ require 'debug'
 NUMBER_OF_COLUMNS = 3
 MULTIPLE_OF_COLUMN_WIDTH = 8
 
-def main(column_number)
+def main
   options = select_options
   files = acquire_files(a_option: options[:a], r_option: options[:r])
   if options[:l]
-    [get_file_mode(files), get_link_number(files),
-     get_user_name(files), get_group_name(files),
-     get_byte(files), get_last_modified_date(files),
-     get_file_name(files)].transpose.map { |file| file.join(' ') }.unshift("total #{files.inject(0) { |i, file| i + File.lstat(file).blocks }}")
+    puts [get_file_mode(files), get_link_number(files),
+          get_user_name(files), get_group_name(files),
+          get_byte(files), get_last_modified_date(files),
+          get_file_name(files)].transpose.map { |file| file.join(' ') }.unshift("total #{files.inject(0) { |i, file| i + File.lstat(file).blocks }}")
   else
-    generate_files_for_display(files, column_number)
+    puts generate_files_for_display(files, NUMBER_OF_COLUMNS)
   end
 end
 
@@ -129,4 +129,4 @@ def get_file_name(files)
   end
 end
 
-puts main(NUMBER_OF_COLUMNS)
+main
