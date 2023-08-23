@@ -13,9 +13,9 @@ def main
   options = select_options
   files = acquire_files(a_option: options[:a], r_option: options[:r])
   if options[:l]
-    puts generate_display_f_option(files)
+    puts generate_display_l_option(files)
   else
-    puts generate_files_for_display(files, NUMBER_OF_COLUMNS)
+    puts generate_display_files(files, NUMBER_OF_COLUMNS)
   end
 end
 
@@ -45,7 +45,7 @@ def get_column_width(files)
   (max_of_length.next..).find { |n| (n % MULTIPLE_OF_COLUMN_WIDTH).zero? }
 end
 
-def generate_files_for_display(files, column_number)
+def generate_display_files(files, column_number)
   column_width = get_column_width(files)
   transposed_files = transpose_by_each_columns(files, column_number)
   transposed_files.map do |files_each_lines|
@@ -117,7 +117,7 @@ def get_file_name(file)
   File.lstat(file).symlink? ? "#{file} -> #{File.readlink(file)}" : file
 end
 
-def generate_display_f_option(files)
+def generate_display_l_option(files)
   max = get_max_length(files)
   files.map do |file|
     [get_file_mode(file),
