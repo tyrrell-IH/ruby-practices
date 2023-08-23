@@ -13,11 +13,7 @@ def main
   options = select_options
   files = acquire_files(a_option: options[:a], r_option: options[:r])
   if options[:l]
-    max = get_max_length(files)
-    generate =  files.map do |file|
-      "#{get_file_mode(file)}  #{get_link_number(file).rjust(max[:link])} #{get_user_name(file).ljust(max[:user])}  #{get_group_name(file).ljust(max[:group])}  #{get_byte(file).rjust(max[:byte])} #{get_last_modified_date(file)} #{get_file_name(file)}"
-    end
-    puts generate
+    puts generate_display_f_option(files)
   else
     puts generate_files_for_display(files, NUMBER_OF_COLUMNS)
   end
@@ -119,6 +115,19 @@ end
 
 def get_file_name(file)
   File.lstat(file).symlink? ? "#{file} -> #{File.readlink(file)}" : file
+end
+
+def generate_display_f_option(files)
+  max = get_max_length(files)
+  files.map do |file|
+    [get_file_mode(file),
+     get_link_number(file).rjust(max[:link] + 1),
+     get_user_name(file).ljust(max[:user] + 1),
+     get_group_name(file).ljust(max[:group] + 1),
+     get_byte(file).rjust(max[:byte]),
+     get_last_modified_date(file),
+     get_file_name(file)].join(' ')
+  end
 end
 
 main
