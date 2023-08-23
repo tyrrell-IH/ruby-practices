@@ -13,10 +13,11 @@ def main
   options = select_options
   files = acquire_files(a_option: options[:a], r_option: options[:r])
   if options[:l]
-    puts [get_file_mode(files), get_link_number(files),
-          get_user_name(files), get_group_name(files),
-          get_byte(files), get_last_modified_date(files),
-          get_file_name(files)].transpose.map { |file| file.join(' ') }.unshift("total #{files.inject(0) { |i, file| i + File.lstat(file).blocks }}")
+    max = get_max_length(files)
+    generate =  files.map do |file|
+      "#{get_file_mode(file)}  #{get_link_number(file).rjust(max[:link])} #{get_user_name(file).ljust(max[:user])}  #{get_group_name(file).ljust(max[:group])}  #{get_byte(file).rjust(max[:byte])} #{get_last_modified_date(file)} #{get_file_name(file)}"
+    end
+    puts generate
   else
     puts generate_files_for_display(files, NUMBER_OF_COLUMNS)
   end
@@ -80,53 +81,47 @@ def get_permission(oct_mode)
   check_stickybit_sgid_suid(oct_mode, permission)
 end
 
-def get_file_mode(files)
+def get_file_mode(file)
   file_type = { '04' => 'd', '10' => '-', '12' => 'l' }
-  files.map do |file|
-    oct_mode = get_oct_mode(file)
-    "#{file_type[oct_mode[0..1]]}#{get_permission(oct_mode)}"
+  oct_mode = get_oct_mode(file)
+  "#{file_type[oct_mode[0..1]]}#{get_permission(oct_mode)}"
+end
+
+def get_max_length(files)
+  max = {}
+  max[:link] = files.map { |file| File.lstat(file).nlink.to_s }.max_by(&:length).length
+  max[:user] = files.map { |file| Etc.getpwuid(File.lstat(file).uid).name }.max_by(&:length).length
+  max[:group] = files.map { |file| Etc.getgrgid(File.lstat(file).gid).name }.max_by(&:length).length
+  max[:byte] = files.map { |file| File.lstat(file).size.to_s }.max_by(&:length).length
+  max
+end
+
+def get_link_number(file)
+  File.lstat(file).nlink.to_s
+end
+
+def get_user_name(file)
+  Etc.getpwuid(File.lstat(file).uid).name
+end
+
+def get_group_name(file)
+  Etc.getgrgid(File.lstat(file).gid).name
+end
+
+def get_byte(file)
+  File.lstat(file).size.to_s
+end
+
+def get_last_modified_date(file)
+  if File.lstat(file).mtime.to_date.between?(Date.today.prev_month(6), Date.today)
+    File.lstat(file).mtime.strftime('%b %e %H:%M')
+  else
+    File.lstat(file).mtime.strftime('%b %e  %Y')
   end
 end
 
-def get_link_number(files)
-  max = files.map { |file| File.lstat(file).nlink.to_s }.max_by(&:length).length
-  files.map do |file|
-    File.lstat(file).nlink.to_s.rjust(max + 1)
-  end
-end
-
-def get_user_name(files)
-  max = files.map { |file| Etc.getpwuid(File.lstat(file).uid).name }.max_by(&:length).length
-  files.map do |file|
-    Etc.getpwuid(File.lstat(file).uid).name.ljust(max + 1)
-  end
-end
-
-def get_group_name(files)
-  max = files.map { |file| Etc.getgrgid(File.lstat(file).gid).name }.max_by(&:length).length
-  files.map do |file|
-    Etc.getgrgid(File.lstat(file).gid).name.ljust(max + 1)
-  end
-end
-
-def get_byte(files)
-  max = files.map { |file| File.lstat(file).size.to_s }.max_by(&:length).length
-  files.map do |file|
-    File.lstat(file).size.to_s.rjust(max)
-  end
-end
-
-def get_last_modified_date(files)
-  files.map do |file|
-    modified_time = File.lstat(file).mtime
-    modified_time.to_date.between?(Date.today.prev_month(6), Date.today) ? modified_time.strftime('%b %e %H:%M') : modified_time.strftime('%b %e  %Y')
-  end
-end
-
-def get_file_name(files)
-  files.map do |file|
-    File.lstat(file).symlink? ? "#{file} -> #{File.readlink(file)}" : file
-  end
+def get_file_name(file)
+  File.lstat(file).symlink? ? "#{file} -> #{File.readlink(file)}" : file
 end
 
 main
