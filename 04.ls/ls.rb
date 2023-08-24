@@ -128,13 +128,16 @@ end
 
 def generate_file_info_to_display(files)
   files.map do |file|
-    [get_file_mode(file),
-     get_link_number(file).rjust(get_link_number_width(files) + 1),
-     get_user_name(file).ljust(get_user_name_width(files) + 1),
-     get_group_name(file).ljust(get_group_name_width(files) + 1),
-     get_byte(file).rjust(get_byte_width(files)),
-     get_last_modified_date(file),
-     get_file_name(file)].join(' ')
+    file_info = [
+      get_file_mode(file),
+      get_link_number(file).rjust(get_link_number_width(files) + 1),
+      get_user_name(file).ljust(get_user_name_width(files) + 1),
+      get_group_name(file).ljust(get_group_name_width(files) + 1),
+      get_byte(file).rjust(get_byte_width(files)),
+      get_last_modified_date(file),
+      get_file_name(file)
+    ]
+    file_info.join(' ')
   end
 end
 
