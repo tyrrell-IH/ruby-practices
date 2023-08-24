@@ -10,7 +10,7 @@ NUMBER_OF_COLUMNS = 3
 MULTIPLE_OF_COLUMN_WIDTH = 8
 
 def main
-  options = select_options
+  options = parse_option
   files = acquire_files(a_option: options[:a], r_option: options[:r])
   if options[:l]
     puts generate_file_info_to_display(files)
@@ -19,7 +19,7 @@ def main
   end
 end
 
-def select_options
+def parse_option
   params = {}
   opt = OptionParser.new
   opt.on('-a') { |v| params[:a] = v }
