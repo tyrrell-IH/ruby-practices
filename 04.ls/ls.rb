@@ -65,14 +65,16 @@ def check_stickybit_sgid_suid(oct_mode, permission)
 end
 
 def get_permission(oct_mode)
-  permission_data = { '0' => '---',
-                      '1' => '--x',
-                      '2' => '-w-',
-                      '3' => '-wx',
-                      '4' => 'r--',
-                      '5' => 'r-x',
-                      '6' => 'rw-',
-                      '7' => 'rwx' }
+  permission_data = {
+    '0' => '---',
+    '1' => '--x',
+    '2' => '-w-',
+    '3' => '-wx',
+    '4' => 'r--',
+    '5' => 'r-x',
+    '6' => 'rw-',
+    '7' => 'rwx'
+  }
   permission = oct_mode[3..5].chars.map { |n| permission_data[n] }.join('')
   check_stickybit_sgid_suid(oct_mode, permission)
 end
