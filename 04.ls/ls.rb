@@ -100,8 +100,20 @@ def get_byte(file)
   File.lstat(file).size.to_s
 end
 
-def get_file_info_width(files, &block)
-  files.map(&block).max_by(&:length).length
+def get_link_number_max_length(files)
+  files.map { |file| get_link_number(file) }.max_by(&:length).length
+end
+
+def get_user_name_max_length(files)
+  files.map { |file| get_user_name(file) }.max_by(&:length).length
+end
+
+def get_group_name_max_length(files)
+  files.map { |file| get_group_name(file) }.max_by(&:length).length
+end
+
+def get_byte_max_length(files)
+  files.map { |file| get_byte(file) }.max_by(&:length).length
 end
 
 def get_last_modified_date(file)
@@ -114,17 +126,17 @@ def get_file_name(file)
 end
 
 def generate_file_info_to_display(files)
-  link_number_width = get_file_info_width(files) { |file| get_link_number(file) }
-  user_name_width = get_file_info_width(files) { |file| get_user_name(file) }
-  group_name_width = get_file_info_width(files) { |file| get_group_name(file) }
-  byte_width = get_file_info_width(files) { |file| get_byte(file) }
+  link_max_length = get_link_number_max_length(files)
+  user_max_length = get_user_name_max_length(files)
+  group_max_length = get_group_name_max_length(files)
+  byte_max_length = get_byte_max_length(files)
   files.map do |file|
     file_info = [
       get_file_mode(file),
-      get_link_number(file).rjust(link_number_width + 1),
-      get_user_name(file).ljust(user_name_width + 1),
-      get_group_name(file).ljust(group_name_width + 1),
-      get_byte(file).rjust(byte_width),
+      get_link_number(file).rjust(link_max_length + 1),
+      get_user_name(file).ljust(user_max_length + 1),
+      get_group_name(file).ljust(group_max_length + 1),
+      get_byte(file).rjust(byte_max_length),
       get_last_modified_date(file),
       get_file_name(file)
     ]
