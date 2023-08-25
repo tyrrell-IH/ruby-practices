@@ -4,7 +4,6 @@
 require 'optparse'
 require 'etc'
 require 'date'
-require 'debug'
 
 NUMBER_OF_COLUMNS = 3
 MULTIPLE_OF_COLUMN_WIDTH = 8
