@@ -14,7 +14,7 @@ def main
   if options[:l]
     puts generate_file_info_to_display(files)
   else
-    puts generate_file_name_to_display(files, NUMBER_OF_COLUMNS)
+    puts generate_file_name_to_display(files)
   end
 end
 
@@ -33,9 +33,9 @@ def acquire_files(a_option: false, r_option: false)
   r_option ? files.reverse : files
 end
 
-def transpose_by_each_columns(files, columns)
-  files << '' while files.size % columns != 0
-  lines = files.size / columns
+def transpose_by_each_columns(files)
+  files << '' while files.size % NUMBER_OF_COLUMNS != 0
+  lines = files.size / NUMBER_OF_COLUMNS
   files.each_slice(lines).to_a.transpose
 end
 
@@ -44,9 +44,9 @@ def get_column_width(files)
   (max_of_length.next..).find { |n| (n % MULTIPLE_OF_COLUMN_WIDTH).zero? }
 end
 
-def generate_file_name_to_display(files, column_number)
+def generate_file_name_to_display(files)
   column_width = get_column_width(files)
-  transposed_files = transpose_by_each_columns(files, column_number)
+  transposed_files = transpose_by_each_columns(files)
   transposed_files.map do |files_each_lines|
     files_each_lines.map { |file| file.ljust(column_width) }.join('')
   end
