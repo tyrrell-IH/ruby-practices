@@ -4,6 +4,17 @@
 #列の幅が8の倍数になる
 MULTIPLE_OF_COLUMN_WIDTH = 8
 
+def main
+  if ARGV.empty?
+    text = $stdin.read
+    puts generate_stdin_contents(text)
+  else
+    files = ARGV
+    puts generate_contents(files)
+    puts generate_total_contents(files) if files.size >= 2
+  end
+end
+
 def count_lines(file)
   File.read(file).lines.size
 end
@@ -15,6 +26,19 @@ end
 
 def count_bytes(file)
   File.read(file).bytesize
+end
+
+def count_stdin_lines(text)
+  text.lines.size
+end
+
+def count_stdin_words(text)
+  words = text.split(/\s/)
+  words.reject{|word| word.length.zero?}.size
+end
+
+def count_stdin_bytes(text)
+  text.bytesize
 end
 
 def get_lines_width(files)
@@ -33,6 +57,21 @@ def get_bytes_width(files)
   max_file = files.max_by { |file| count_bytes(file).to_s}
   max_length = count_bytes(max_file).to_s.length
   (max_length.next..).find { |n| (n % MULTIPLE_OF_COLUMN_WIDTH).zero? }
+end
+
+def get_stdin_lines_width(text)
+  length = count_stdin_lines(text).to_s.length
+  (length.next..).find { |n| (n % MULTIPLE_OF_COLUMN_WIDTH).zero? }
+end
+
+def get_stdin_words_width(text)
+  length = count_stdin_words(text).to_s.length
+  (length.next..).find { |n| (n % MULTIPLE_OF_COLUMN_WIDTH).zero? }
+end
+
+def get_stdin_bytes_width(text)
+  length = count_stdin_bytes(text).to_s.length
+  (length.next..).find { |n| (n % MULTIPLE_OF_COLUMN_WIDTH).zero? }
 end
 
 def generate_contents(files)
@@ -64,6 +103,15 @@ def generate_total_contents(files)
 ].join('')
 end
 
-files = ARGV
-puts generate_contents(files)
-puts generate_total_contents(files)
+def generate_stdin_contents(text)
+  lines_width = get_stdin_lines_width(text)
+  words_width = get_stdin_words_width(text)
+  bytes_width = get_stdin_bytes_width(text)
+  [
+    count_stdin_lines(text).to_s.rjust(lines_width),
+    count_stdin_words(text).to_s.rjust(words_width),
+    count_stdin_bytes(text).to_s.rjust(bytes_width)
+].join('')
+end
+
+main
