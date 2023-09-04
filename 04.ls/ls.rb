@@ -12,6 +12,7 @@ def main
   options = parse_options
   files = acquire_files(a_option: options[:a], r_option: options[:r])
   if options[:l]
+    puts "total #{files.inject(0) { |total, file| total + File.lstat(file).blocks }}"
     puts generate_file_info_to_display(files)
   else
     puts generate_file_name_to_display(files)
