@@ -1,18 +1,32 @@
 #! /usr/bin/env ruby
 # frozen_string_literal: true
 
+require 'optparse'
+
 # 列の幅が8の倍数になる
 MULTIPLE_OF_COLUMN_WIDTH = 8
 
 def main
+  option = parse_options
   if ARGV.empty?
     text = $stdin.read
-    puts generate_stdin_contents(text)
+    puts generate_stdin_contents(text, option)
   else
     files = ARGV
-    puts generate_contents(files)
-    puts generate_total_contents(files) if files.size >= 2
+    puts generate_contents(files, option)
+    puts generate_total_contents(files, option) if files.size >= 2
   end
+end
+
+def parse_options
+  params = {}
+  opt = OptionParser.new
+  opt.on('-l') { |v| params[:l] = v }
+  opt.on('-w') { |v| params[:w] = v }
+  opt.on('-c') { |v| params[:c] = v }
+  opt.parse!
+  params = {l: true, w: true, c: true} if params.empty?
+  params
 end
 
 def count_lines(file)
@@ -74,44 +88,45 @@ def get_stdin_bytes_width(text)
   (length.next..).find { |n| (n % MULTIPLE_OF_COLUMN_WIDTH).zero? }
 end
 
-def generate_contents(files)
+def generate_contents(files, option)
   lines_width = get_lines_width(files)
   words_width = get_words_width(files)
   bytes_width = get_bytes_width(files)
-  files.map do |file|
-    [
-      count_lines(file).to_s.rjust(lines_width),
-      count_words(file).to_s.rjust(words_width),
-      count_bytes(file).to_s.rjust(bytes_width),
-      " #{file}"
-    ].join('')
+  contents = files.map do |file|
+    content = []
+    content << count_lines(file).to_s.rjust(lines_width) if option[:l]
+    content << count_words(file).to_s.rjust(words_width) if option[:w]
+    content << count_bytes(file).to_s.rjust(bytes_width) if option[:c]
+    content << " #{file}"
+    content.join('')
   end
+  contents
 end
 
-def generate_total_contents(files)
+def generate_total_contents(files, option)
   lines_width = get_lines_width(files)
   words_width = get_words_width(files)
   bytes_width = get_bytes_width(files)
   lines_total = files.inject(0) { |result, file| result + count_lines(file) }
   words_total = files.inject(0) { |result, file| result + count_words(file) }
   bytes_total = files.inject(0) { |result, file| result + count_bytes(file) }
-  [
-    lines_total.to_s.rjust(lines_width),
-    words_total.to_s.rjust(words_width),
-    bytes_total.to_s.rjust(bytes_width),
-    ' total'
-  ].join('')
+  content = []
+  content << lines_total.to_s.rjust(lines_width) if option[:l]
+  content << words_total.to_s.rjust(words_width) if option[:w]
+  content << bytes_total.to_s.rjust(bytes_width) if option[:c]
+  content << ' total'
+  content.join('')
 end
 
-def generate_stdin_contents(text)
+def generate_stdin_contents(text, option)
   lines_width = get_stdin_lines_width(text)
   words_width = get_stdin_words_width(text)
   bytes_width = get_stdin_bytes_width(text)
-  [
-    count_stdin_lines(text).to_s.rjust(lines_width),
-    count_stdin_words(text).to_s.rjust(words_width),
-    count_stdin_bytes(text).to_s.rjust(bytes_width)
-  ].join('')
+  content = []
+  content << count_stdin_lines(text).to_s.rjust(lines_width) if option[:l]
+  content << count_stdin_words(text).to_s.rjust(words_width) if option[:w]
+  content << count_stdin_bytes(text).to_s.rjust(bytes_width) if option[:c]
+  content.join('')
 end
 
 main
