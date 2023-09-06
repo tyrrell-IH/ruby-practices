@@ -14,7 +14,7 @@ def main
   else
     files = ARGV
     puts generate_main_contents_given_args(files, option)
-    puts generate_total_contents(files, option) if files.size >= 2
+    puts generate_total_contents_given_args(files, option) if files.size >= 2
   end
 end
 
@@ -117,7 +117,7 @@ def generate_main_contents_given_args(files, option)
   end
 end
 
-def generate_total_contents(files, option)
+def generate_total_contents_given_args(files, option)
   width = collect_width_given_args(files)
   lines_total = files.inject(0) { |result, file| result + count_lines_given_args(file) }
   words_total = files.inject(0) { |result, file| result + count_words_given_args(file) }
