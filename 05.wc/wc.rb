@@ -42,6 +42,18 @@ def count_bytes_given_args(file)
   File.read(file).bytesize
 end
 
+def count_total_lines_given_args(files)
+  files.inject(0) { |result, file| result + count_lines_given_args(file) }
+end
+
+def count_total_words_given_args(files)
+  files.inject(0) { |result, file| result + count_words_given_args(file) }
+end
+
+def count_total_bytes_given_args(files)
+  files.inject(0) { |result, file| result + count_bytes_given_args(file) }
+end
+
 def count_lines_given_stdin(text)
   text.lines.size
 end
@@ -58,19 +70,34 @@ end
 # 行数、単語数、バイト数の各文字数の最大値より大きく、かつ8の倍数の内で最小の数を列の幅とします。
 def get_lines_width_given_args(files)
   max_file = files.max_by { |file| count_lines_given_args(file).to_s.length }
-  max_length = count_lines_given_args(max_file).to_s.length
+  max_length =
+    if files.size >= 2
+      count_total_lines_given_args(files).to_s.length
+    else
+      count_lines_given_args(max_file).to_s.length
+    end
   (max_length.next..).find { |n| (n % MULTIPLE_OF_COLUMN_WIDTH).zero? }
 end
 
 def get_words_width_given_args(files)
   max_file = files.max_by { |file| count_words_given_args(file).to_s.length }
-  max_length = count_words_given_args(max_file).to_s.length
+  max_length =
+    if files.size >= 2
+      count_total_words_given_args(files).to_s.length
+    else
+      count_words_given_args(max_file).to_s.length
+    end
   (max_length.next..).find { |n| (n % MULTIPLE_OF_COLUMN_WIDTH).zero? }
 end
 
 def get_bytes_width_given_args(files)
   max_file = files.max_by { |file| count_bytes_given_args(file).to_s }
-  max_length = count_bytes_given_args(max_file).to_s.length
+  max_length =
+    if files.size >= 2
+      count_total_bytes_given_args(files).to_s.length
+    else
+      count_bytes_given_args(max_file).to_s.length
+    end
   (max_length.next..).find { |n| (n % MULTIPLE_OF_COLUMN_WIDTH).zero? }
 end
 
@@ -119,13 +146,13 @@ end
 
 def generate_total_contents_given_args(files, option)
   width = collect_width_given_args(files)
-  lines_total = files.inject(0) { |result, file| result + count_lines_given_args(file) }
-  words_total = files.inject(0) { |result, file| result + count_words_given_args(file) }
-  bytes_total = files.inject(0) { |result, file| result + count_bytes_given_args(file) }
+  num_lines = count_total_lines_given_args(files)
+  num_words = count_total_words_given_args(files)
+  num_bytes = count_total_bytes_given_args(files)
   content = []
-  content << lines_total.to_s.rjust(width[:lines]) if option[:l]
-  content << words_total.to_s.rjust(width[:words]) if option[:w]
-  content << bytes_total.to_s.rjust(width[:bytes]) if option[:c]
+  content << num_lines.to_s.rjust(width[:lines]) if option[:l]
+  content << num_words.to_s.rjust(width[:words]) if option[:w]
+  content << num_bytes.to_s.rjust(width[:bytes]) if option[:c]
   content << ' total'
   content.join('')
 end
