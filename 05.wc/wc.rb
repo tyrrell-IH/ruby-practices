@@ -8,14 +8,8 @@ MULTIPLE_OF_COLUMN_WIDTH = 8
 
 def main
   option = parse_options
-  if ARGV.empty?
-    text = $stdin.read
-    puts generate_main_contents_given_stdin(text, option)
-  else
-    files = ARGV
-    puts generate_main_contents_given_args(files, option)
-    puts generate_total_contents_given_args(files, option) if files.size >= 2
-  end
+  texts = ARGV.empty? ? Array($stdin.read) : read_files(ARGV)
+  puts generate_contents(texts, option)
 end
 
 def parse_options
@@ -29,141 +23,99 @@ def parse_options
   params
 end
 
-def count_lines_given_args(file)
-  File.read(file).lines.size
+def read_files(files)
+  files.map { |file| File.read(file) }
 end
 
-def count_words_given_args(file)
-  words = File.read(file).split(/\s/)
-  words.count { |word| !word.empty? }
-end
-
-def count_bytes_given_args(file)
-  File.read(file).bytesize
-end
-
-def count_total_lines_given_args(files)
-  files.inject(0) { |result, file| result + count_lines_given_args(file) }
-end
-
-def count_total_words_given_args(files)
-  files.inject(0) { |result, file| result + count_words_given_args(file) }
-end
-
-def count_total_bytes_given_args(files)
-  files.inject(0) { |result, file| result + count_bytes_given_args(file) }
-end
-
-def count_lines_given_stdin(text)
+def count_lines(text)
   text.lines.size
 end
 
-def count_words_given_stdin(text)
+def count_words(text)
   words = text.split(/\s/)
   words.count { |word| !word.empty? }
 end
 
-def count_bytes_given_stdin(text)
+def count_bytes(text)
   text.bytesize
 end
 
+def count_total_lines(texts)
+  texts.inject(0) { |result, text| result + count_lines(text) }
+end
+
+def count_total_words(texts)
+  texts.inject(0) { |result, text| result + count_words(text) }
+end
+
+def count_total_bytes(texts)
+  texts.inject(0) { |result, text| result + count_bytes(text) }
+end
+
 # 行数、単語数、バイト数の各文字数の最大値より大きく、かつ8の倍数の内で最小の数を列の幅とします。
-def get_lines_width_given_args(files)
-  max_file = files.max_by { |file| count_lines_given_args(file).to_s.length }
+def get_lines_width(texts)
   max_length =
-    if files.size >= 2
-      count_total_lines_given_args(files).to_s.length
+    if ARGV.size >= 2
+      count_total_lines(texts).to_s.length
     else
-      count_lines_given_args(max_file).to_s.length
+      count_lines(*texts).to_s.length
     end
   (max_length.next..).find { |n| (n % MULTIPLE_OF_COLUMN_WIDTH).zero? }
 end
 
-def get_words_width_given_args(files)
-  max_file = files.max_by { |file| count_words_given_args(file).to_s.length }
+def get_words_width(texts)
   max_length =
-    if files.size >= 2
-      count_total_words_given_args(files).to_s.length
+    if ARGV.size >= 2
+      count_total_words(texts).to_s.length
     else
-      count_words_given_args(max_file).to_s.length
+      count_words(*texts).to_s.length
     end
   (max_length.next..).find { |n| (n % MULTIPLE_OF_COLUMN_WIDTH).zero? }
 end
 
-def get_bytes_width_given_args(files)
-  max_file = files.max_by { |file| count_bytes_given_args(file).to_s }
+def get_bytes_width(texts)
   max_length =
-    if files.size >= 2
-      count_total_bytes_given_args(files).to_s.length
+    if ARGV.size >= 2
+      count_total_bytes(texts).to_s.length
     else
-      count_bytes_given_args(max_file).to_s.length
+      count_bytes(*texts).to_s.length
     end
   (max_length.next..).find { |n| (n % MULTIPLE_OF_COLUMN_WIDTH).zero? }
 end
 
-def collect_width_given_args(files)
-  {
-    lines: get_lines_width_given_args(files),
-    words: get_words_width_given_args(files),
-    bytes: get_bytes_width_given_args(files)
-  }
-end
-
-def get_lines_width_given_stdin(text)
-  length = count_lines_given_stdin(text).to_s.length
-  (length.next..).find { |n| (n % MULTIPLE_OF_COLUMN_WIDTH).zero? }
-end
-
-def get_words_width_given_stdin(text)
-  length = count_words_given_stdin(text).to_s.length
-  (length.next..).find { |n| (n % MULTIPLE_OF_COLUMN_WIDTH).zero? }
-end
-
-def get_bytes_width_given_stdin(text)
-  length = count_bytes_given_stdin(text).to_s.length
-  (length.next..).find { |n| (n % MULTIPLE_OF_COLUMN_WIDTH).zero? }
-end
-
-def collect_width_given_stdin(text)
-  {
-    lines: get_lines_width_given_stdin(text),
-    words: get_words_width_given_stdin(text),
-    bytes: get_bytes_width_given_stdin(text)
-  }
-end
-
-def generate_main_contents_given_args(files, option)
-  width = collect_width_given_args(files)
-  files.map do |file|
-    content = []
-    content << count_lines_given_args(file).to_s.rjust(width[:lines]) if option[:l]
-    content << count_words_given_args(file).to_s.rjust(width[:words]) if option[:w]
-    content << count_bytes_given_args(file).to_s.rjust(width[:bytes]) if option[:c]
-    content << " #{file}"
-    content.join('')
-  end
-end
-
-def generate_total_contents_given_args(files, option)
-  width = collect_width_given_args(files)
-  num_lines = count_total_lines_given_args(files)
-  num_words = count_total_words_given_args(files)
-  num_bytes = count_total_bytes_given_args(files)
+def generate_total_contents(texts, option)
+  width =
+    {
+      lines: get_lines_width(texts),
+      words: get_words_width(texts),
+      bytes: get_bytes_width(texts)
+    }
   content = []
-  content << num_lines.to_s.rjust(width[:lines]) if option[:l]
-  content << num_words.to_s.rjust(width[:words]) if option[:w]
-  content << num_bytes.to_s.rjust(width[:bytes]) if option[:c]
+  content << count_total_lines(texts).to_s.rjust(width[:lines]) if option[:l]
+  content << count_total_words(texts).to_s.rjust(width[:words]) if option[:w]
+  content << count_total_bytes(texts).to_s.rjust(width[:bytes]) if option[:c]
   content << ' total'
   content.join('')
 end
 
-def generate_main_contents_given_stdin(text, option)
-  width = collect_width_given_stdin(text)
-  content = []
-  content << count_lines_given_stdin(text).to_s.rjust(width[:lines]) if option[:l]
-  content << count_words_given_stdin(text).to_s.rjust(width[:words]) if option[:w]
-  content << count_bytes_given_stdin(text).to_s.rjust(width[:bytes]) if option[:c]
-  content.join('')
+def generate_contents(texts, option)
+  width =
+    {
+      lines: get_lines_width(texts),
+      words: get_words_width(texts),
+      bytes: get_bytes_width(texts)
+    }
+  contents =
+    texts.map.with_index do |text, i|
+      content = []
+      content << count_lines(text).to_s.rjust(width[:lines]) if option[:l]
+      content << count_words(text).to_s.rjust(width[:words]) if option[:w]
+      content << count_bytes(text).to_s.rjust(width[:bytes]) if option[:c]
+      content << " #{ARGV[i]}"
+      content.join('')
+    end
+  contents.push(generate_total_contents(texts, option)) if ARGV.size >= 2
+  contents
 end
 
 main
