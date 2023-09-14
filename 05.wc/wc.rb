@@ -28,7 +28,7 @@ def read_files(files)
 end
 
 def count_lines(text)
-  text.lines.size
+  text.count("\n")
 end
 
 def count_words(text)
