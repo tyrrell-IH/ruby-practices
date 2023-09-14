@@ -14,7 +14,7 @@ opt.parse!(ARGV)
 biginning_of_the_month = Date.new(displayed_year, displayed_month, 1)
 end_of_the_month = Date.new(displayed_year, displayed_month, -1)
 
-all_days_of_the_month = (biginning_of_the_month..end_of_the_month).map { |date| date.strftime('%e') }
+all_days_of_the_month = (biginning_of_the_month..end_of_the_month).map { |date| date.day.to_s.rjust(2) }
 biginning_of_the_month.cwday.times { all_days_of_the_month.unshift('  ') } unless biginning_of_the_month.sunday?
 
 puts "#{displayed_month}月 #{displayed_year}".center(20)
