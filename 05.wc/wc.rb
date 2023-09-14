@@ -7,20 +7,20 @@ require 'optparse'
 MULTIPLE_OF_COLUMN_WIDTH = 8
 
 def main
-  option = parse_options
+  options = parse_options
   texts = ARGV.empty? ? Array($stdin.read) : read_files(ARGV)
-  puts generate_contents(texts, option)
+  puts generate_contents(texts, options)
 end
 
 def parse_options
-  params = {}
+  options = {}
   opt = OptionParser.new
-  opt.on('-l') { |v| params[:l] = v }
-  opt.on('-w') { |v| params[:w] = v }
-  opt.on('-c') { |v| params[:c] = v }
+  opt.on('-l') { |v| options[:l] = v }
+  opt.on('-w') { |v| options[:w] = v }
+  opt.on('-c') { |v| options[:c] = v }
   opt.parse!
-  params = { l: true, w: true, c: true } if params.empty?
-  params
+  options = { l: true, w: true, c: true } if options.empty?
+  options
 end
 
 def read_files(files)
