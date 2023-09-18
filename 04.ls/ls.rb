@@ -11,7 +11,7 @@ MULTIPLE_OF_COLUMN_WIDTH = 8
 def main
   options = parse_options
   files = acquire_files(a_option: options[:a], r_option: options[:r])
-  generate_contents(files, l_option: options[:l])
+  display(files, l_option: options[:l])
 end
 
 def parse_options
@@ -144,7 +144,7 @@ def generate_header_to_display(files)
   "total #{files.inject(0) { |total, file| total + File.lstat(file).blocks }}"
 end
 
-def generate_contents(files, l_option: false)
+def display(files, l_option: false)
   if l_option
     puts generate_header_to_display(files)
     puts generate_file_info_to_display(files)
