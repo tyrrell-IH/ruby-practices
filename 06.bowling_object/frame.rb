@@ -10,22 +10,14 @@ class Frame
     @first_shot = first_shot
     @second_shot = second_shot
     @third_shot = third_shot
-    @strike = false
-    @spare = false
-
-    if @first_shot.score == 10
-      @strike = true
-    elsif (@first_shot.score + @second_shot.score) == 10
-      @spare = true
-    end
   end
 
   def strike?
-    @strike
+    @first_shot.score == 10
   end
 
   def spare?
-    @spare
+    (@first_shot.score != 10) && ((@first_shot.score + @second_shot.score) == 10)
   end
 
   def score
