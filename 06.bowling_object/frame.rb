@@ -5,11 +5,11 @@ require_relative 'shot'
 class Frame
   attr_reader :first_shot, :second_shot, :frame_number
 
-  def initialize(frame_number:, first_shot:, second_shot:, third_shot: nil)
+  def initialize(frame_number:, first_shot:, second_shot: nil, third_shot: nil)
     @frame_number = frame_number
-    @first_shot = first_shot
-    @second_shot = second_shot
-    @third_shot = third_shot
+    @first_shot = Shot.new(first_shot)
+    @second_shot = Shot.new(second_shot)
+    @third_shot = Shot.new(third_shot)
   end
 
   def strike?
