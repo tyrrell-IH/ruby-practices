@@ -8,8 +8,8 @@ class Frame
   def initialize(frame_number:, first_shot:, second_shot: nil, third_shot: nil)
     @frame_number = frame_number
     @first_shot = Shot.new(first_shot)
-    @second_shot = Shot.new(second_shot)
-    @third_shot = Shot.new(third_shot)
+    @second_shot = Shot.new(second_shot) if second_shot
+    @third_shot = Shot.new(third_shot) if third_shot
   end
 
   def strike?
