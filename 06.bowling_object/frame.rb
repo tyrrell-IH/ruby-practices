@@ -35,9 +35,9 @@ class Frame
     return 0 if @frame_number == 10
 
     if strike?
-      @first_shot.next_shot.score + @first_shot.next_shot.next_shot.score
+      @first_shot.next_score + @first_shot.next_next_score
     elsif spare?
-      @second_shot.next_shot.score
+      @second_shot.next_score
     else
       0
     end
