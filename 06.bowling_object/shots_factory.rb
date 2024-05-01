@@ -11,15 +11,16 @@ class ShotsFactory
     shots = @scores.map do |score|
       Shot.new(score)
     end
-    add_next_shot(shots)
+    add_next_score(shots)
     shots
   end
 
   private
 
-  def add_next_shot(shots)
-    shots.each_cons(2) do |shot, next_shot|
-      shot.next_shot = next_shot
+  def add_next_score(shots)
+    shots.each_cons(3) do |shot, next_shot, next_next_shot|
+      shot.next_score = next_shot.score
+      shot.next_next_score = next_next_shot.score
     end
   end
 end
