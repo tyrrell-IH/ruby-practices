@@ -2,9 +2,12 @@
 
 class Shot
   attr_reader :score
-  attr_accessor :next_score, :next_next_score
 
-  def initialize(score)
-    @score = score == 'X' ? 10 : score.to_i
+  def initialize(record)
+    @score = if record == 'X'
+               10
+             else
+               record.to_i
+             end
   end
 end
