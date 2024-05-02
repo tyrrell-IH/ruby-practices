@@ -23,6 +23,10 @@ class Game
     add_next_frame
   end
 
+  def total_score
+    normal_score + bonus_score
+  end
+
   private
 
   def separate_records_by_frame
@@ -44,4 +48,25 @@ class Game
       frame.next_frame = next_frame
     end
   end
+end
+
+def normal_score
+  @frames.inject(0) { |result, frame| result + frame.score }
+end
+
+def bonus_score
+  bonus_score = 0
+  @frames.each do |frame|
+    next unless frame.strike? || frame.spare?
+
+    bonus_score += frame.next_frame.first_shot.score
+    next if frame.spare?
+
+    bonus_score += if frame.next_frame.strike?
+                     frame.next_frame.next_frame.first_shot.score
+                   else
+                     frame.next_frame.second_shot.score
+                   end
+  end
+  bonus_score
 end
