@@ -2,24 +2,28 @@
 
 require_relative 'shot'
 class Frame
-  attr_reader :first_shot, :second_shot, :third_shot, :frame_number
+  attr_reader :first_shot, :second_shot, :third_shot
   attr_accessor :next_frame
 
-  def initialize(frame_number:, first_record:, second_record: nil, third_record: nil)
-    @frame_number = frame_number
+  def initialize(first_record:, second_record: nil, third_record: nil, last_frame: false)
     @first_shot = Shot.new(first_record)
     @second_shot = Shot.new(second_record) if second_record
     @third_shot = Shot.new(third_record) if third_record
+    @last_frame = last_frame
+  end
+
+  def last_frame?
+    @last_frame
   end
 
   def strike?
-    return nil if @frame_number == 10
+    return nil if last_frame?
 
     @first_shot.score == 10
   end
 
   def spare?
-    return nil if @frame_number == 10
+    return nil if last_frame?
 
     (@first_shot.score != 10) && ((@first_shot.score + @second_shot.score) == 10)
   end

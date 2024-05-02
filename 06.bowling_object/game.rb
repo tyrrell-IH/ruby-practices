@@ -10,14 +10,11 @@ class Game
 
   def generate_frames
     separated_records = separate_records_by_frame
-    separated_records.map.with_index(1) do |records, i|
-      @frames << case records.size
-                 when 1
-                   Frame.new(frame_number: i, first_record: records[0])
-                 when 2
-                   Frame.new(frame_number: i, first_record: records[0], second_record: records[1])
-                 when 3
-                   Frame.new(frame_number: i, first_record: records[0], second_record: records[1], third_record: records[2])
+    separated_records.map do |records|
+      @frames << if @frames.size == 9
+                   Frame.new(first_record: records[0], second_record: records[1], third_record: records[2], last_frame: true)
+                 else
+                   Frame.new(first_record: records[0], second_record: records[1])
                  end
     end
     add_next_frame
