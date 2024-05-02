@@ -9,12 +9,16 @@ class Game
   end
 
   def generate_frames
-    separated_records = separate_records_by_frame
-    separated_records.map do |records|
+    until @records.empty?
       @frames << if @frames.size == 9
-                   Frame.new(first_record: records[0], second_record: records[1], third_record: records[2], last_frame: true)
+                   record1, record2, record3 = @records.shift(3)
+                   Frame.new(first_record: record1, second_record: record2, third_record: record3, last_frame: true)
+                 elsif @records.first == 'X'
+                   record = @records.shift(1)
+                   Frame.new(first_record: record[0])
                  else
-                   Frame.new(first_record: records[0], second_record: records[1])
+                   record1, record2 = @records.shift(2)
+                   Frame.new(first_record: record1, second_record: record2)
                  end
     end
     add_next_frame
@@ -25,20 +29,6 @@ class Game
   end
 
   private
-
-  def separate_records_by_frame
-    separated_records = []
-    until @records.empty?
-      separated_records << if separated_records.size == 9
-                             @records.shift(3)
-                           elsif @records.first == 'X'
-                             @records.shift(1)
-                           else
-                             @records.shift(2)
-                           end
-    end
-    separated_records
-  end
 
   def add_next_frame
     @frames.each_cons(2) do |frame, next_frame|
