@@ -31,7 +31,6 @@ class Game
     add_next_frame
   end
 
-
   def add_next_frame
     @frames.each_cons(2) do |frame, next_frame|
       frame.next_frame = next_frame
