@@ -8,6 +8,13 @@ class Game
     @frames = []
   end
 
+  def result
+    generate_frames
+    total_score
+  end
+
+  private
+
   def generate_frames
     until @records.empty?
       @frames << if @frames.size == 9
@@ -24,17 +31,16 @@ class Game
     add_next_frame
   end
 
-  def total_score
-    normal_score + bonus_score
-  end
-
-  private
 
   def add_next_frame
     @frames.each_cons(2) do |frame, next_frame|
       frame.next_frame = next_frame
     end
   end
+end
+
+def total_score
+  normal_score + bonus_score
 end
 
 def normal_score
