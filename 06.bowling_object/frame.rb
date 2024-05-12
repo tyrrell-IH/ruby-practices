@@ -18,13 +18,13 @@ class Frame
   end
 
   def strike?
-    return nil if last_frame?
+    return false if last_frame?
 
     @first_shot.score == 10
   end
 
   def spare?
-    return nil if last_frame?
+    return false if last_frame?
 
     (@first_shot.score != 10) && ((@first_shot.score + @second_shot.score) == 10)
   end
