@@ -8,7 +8,7 @@ class Game
     @frames = []
   end
 
-  def result
+  def exec
     generate_frames
     total_score
   end

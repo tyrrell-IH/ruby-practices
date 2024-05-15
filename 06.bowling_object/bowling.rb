@@ -6,7 +6,7 @@ require_relative 'game'
 def exec
   records = ARGV[0].split(',')
   game = Game.new(records)
-  game.result
+  puts game.exec
 end
 
 exec
