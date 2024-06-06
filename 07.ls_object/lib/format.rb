@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class Format
-
   NUMBER_OF_COLUMNS = 3
   MULTIPLE_OF_COLUMN_WIDTH = 8
 
