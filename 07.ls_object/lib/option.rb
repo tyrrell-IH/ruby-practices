@@ -10,15 +10,15 @@ class Option
   opt.on('-l') { |v| @params[:l] = v }
   opt.parse!
 
-  def self.has_a?
+  def self.a?
     @params[:a] || false
   end
 
-  def self.has_r?
+  def self.r?
     @params[:r] || false
   end
 
-  def self.has_l?
+  def self.l?
     @params[:l] || false
   end
 end
