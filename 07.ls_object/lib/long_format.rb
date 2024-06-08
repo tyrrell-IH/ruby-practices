@@ -18,8 +18,8 @@ class LongFormat
         "%<mode>s\s\s%<links>s\s%<owner>s\s\s%<group>s\s\s%<bytes>s\s%<date>s\s%<pass>s",
         mode: content.file_mode,
         links: content.number_of_links.rjust(@number_of_links_width),
-        owner: content.owner_name.rjust(@owner_name_width),
-        group: content.group_name.rjust(@group_name_width),
+        owner: content.owner_name.ljust(@owner_name_width),
+        group: content.group_name.ljust(@group_name_width),
         bytes: content.number_of_bytes.rjust(@number_of_bytes_width),
         date: content.last_modified_date,
         pass: content.path_name
