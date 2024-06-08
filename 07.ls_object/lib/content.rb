@@ -62,4 +62,8 @@ class Content
   def path_name
     @file_info.symlink? ? "#{@file_name}\s->\s#{File.readlink(@file_name)}" : @file_name
   end
+
+  def number_of_blocks
+    @file_info.blocks
+  end
 end

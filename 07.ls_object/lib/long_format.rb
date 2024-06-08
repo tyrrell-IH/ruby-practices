@@ -9,6 +9,7 @@ class LongFormat
     @owner_name_width = calc_width(&:owner_name)
     @group_name_width = calc_width(&:group_name)
     @number_of_bytes_width = calc_width(&:number_of_bytes)
+    @total_blocks = calc_total_number_of_blocks
   end
 
   def adjust
@@ -24,12 +25,18 @@ class LongFormat
         date: content.last_modified_date,
         pass: content.path_name
       )
-    end
+    end.unshift("total\s#{@total_blocks}")
   end
 
   def calc_width
     @file_names.map do |file_name|
       yield Content.new(file_name)
     end.max_by(&:length).length
+  end
+
+  def calc_total_number_of_blocks
+    @file_names.inject(0) do |total, file_name|
+      total + Content.new(file_name).number_of_blocks
+    end
   end
 end
