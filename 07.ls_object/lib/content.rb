@@ -14,6 +14,7 @@ class Content
     '6' => 'rw-',
     '7' => 'rwx'
   }.freeze
+
   FILE_TYPE = {
     '04' => 'd',
     '10' => '-',
