@@ -28,6 +28,8 @@ class LongFormat
     end.unshift("total\s#{@total_blocks}")
   end
 
+  private
+
   def calc_width
     @file_names.map do |file_name|
       yield Content.new(file_name)
