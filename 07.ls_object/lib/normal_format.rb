@@ -6,13 +6,13 @@ class NormalFormat
 
   def initialize(file_names)
     @file_names = file_names
+    @column_width = calc_column_width
   end
 
   def fit_in
-    column_width = calc_column_width
     sorted_files = sort_files_by_columns
     sorted_files.map do |one_line_files|
-      one_line_files.map { |file| file.ljust(column_width) }.join('')
+      one_line_files.map { |file| file.ljust(@column_width) }.join('')
     end
   end
 
