@@ -25,6 +25,7 @@ class NormalFormat
     file_names.each_slice(lines_number).to_a.transpose
   end
 
+  # 列幅はMULTIPLE_OF_COLUMN_WIDTHで指定した数の倍数になるように設定
   def calc_column_width
     max_of_length = @file_names.max_by(&:length).length
     (max_of_length.next..).find { |n| (n % MULTIPLE_OF_COLUMN_WIDTH).zero? }
