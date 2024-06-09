@@ -12,7 +12,7 @@ class LongFormat
     @total_blocks = calc_total_number_of_blocks
   end
 
-  def adjust
+  def fit_in
     @file_names.map do |file_name|
       content = Content.new(file_name)
       format(

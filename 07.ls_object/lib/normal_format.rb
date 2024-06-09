@@ -8,7 +8,7 @@ class NormalFormat
     @file_names = file_names
   end
 
-  def adjust
+  def fit_in
     column_width = calc_column_width
     sorted_files = sort_files_by_columns
     sorted_files.map do |one_line_files|

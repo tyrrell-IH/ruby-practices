@@ -11,9 +11,9 @@ class Display
 
   def exec
     if Option.l?
-      puts LongFormat.new(@file_names).adjust
+      puts LongFormat.new(@file_names).fit_in
     else
-      puts NormalFormat.new(@file_names).adjust
+      puts NormalFormat.new(@file_names).fit_in
     end
   end
 end
