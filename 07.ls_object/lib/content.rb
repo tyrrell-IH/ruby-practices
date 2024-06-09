@@ -23,8 +23,8 @@ class Content
 
   def initialize(file_name)
     @file_name = file_name
-    @file_info = File.lstat(@file_name)
-    @octal_file_mode = @file_info.mode.to_s(8).rjust(6, '0')
+    @file_stat = File.lstat(@file_name)
+    @octal_file_mode = @file_stat.mode.to_s(8).rjust(6, '0')
   end
 
   def file_mode
@@ -36,23 +36,23 @@ class Content
   end
 
   def number_of_links
-    @file_info.nlink.to_s
+    @file_stat.nlink.to_s
   end
 
   def owner_name
-    Etc.getpwuid(@file_info.uid).name
+    Etc.getpwuid(@file_stat.uid).name
   end
 
   def group_name
-    Etc.getgrgid(@file_info.gid).name
+    Etc.getgrgid(@file_stat.gid).name
   end
 
   def number_of_bytes
-    @file_info.size.to_s
+    @file_stat.size.to_s
   end
 
   def last_modified_date
-    modified_time = @file_info.mtime
+    modified_time = @file_stat.mtime
     if modified_time.to_date.between?(Date.today.prev_month(6), Date.today)
       modified_time.strftime("%_m\s%e\s%H:%M")
     else
@@ -61,10 +61,10 @@ class Content
   end
 
   def path_name
-    @file_info.symlink? ? "#{@file_name}\s->\s#{File.readlink(@file_name)}" : @file_name
+    @file_stat.symlink? ? "#{@file_name}\s->\s#{File.readlink(@file_name)}" : @file_name
   end
 
   def number_of_blocks
-    @file_info.blocks
+    @file_stat.blocks
   end
 end
