@@ -20,6 +20,7 @@ class NormalFormat
 
   def sort_files_by_columns
     file_names = @file_names
+    # transposeを使って配列を並び替えるため、要素数が足りない箇所に空文字を追加
     file_names << '' while file_names.size % NUMBER_OF_COLUMNS != 0
     lines_number = file_names.size / NUMBER_OF_COLUMNS
     file_names.each_slice(lines_number).to_a.transpose
