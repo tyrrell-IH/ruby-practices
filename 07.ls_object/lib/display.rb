@@ -10,6 +10,10 @@ class Display
   end
 
   def exec
-    puts Option.l? ? LongFormat.new(@file_names).adjust : NormalFormat.new(@file_names).adjust
+    if Option.l?
+      puts LongFormat.new(@file_names).adjust
+    else
+      puts NormalFormat.new(@file_names).adjust
+    end
   end
 end
