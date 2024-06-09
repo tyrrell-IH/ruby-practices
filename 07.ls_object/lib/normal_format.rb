@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Format
+class NormalFormat
   NUMBER_OF_COLUMNS = 3
   MULTIPLE_OF_COLUMN_WIDTH = 8
 

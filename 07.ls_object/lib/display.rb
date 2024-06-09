@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'format'
+require_relative 'normal_format'
 require_relative 'long_format'
 require_relative 'option'
 
@@ -10,6 +10,6 @@ class Display
   end
 
   def exec
-    puts Option.l? ? LongFormat.new(@file_names).adjust : Format.new(@file_names).adjust
+    puts Option.l? ? LongFormat.new(@file_names).adjust : NormalFormat.new(@file_names).adjust
   end
 end
