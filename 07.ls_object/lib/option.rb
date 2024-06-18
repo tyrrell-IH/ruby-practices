@@ -11,14 +11,14 @@ class Option
   opt.parse!
 
   def self.a?
-    @params[:a] || false
+    @params[:a]
   end
 
   def self.r?
-    @params[:r] || false
+    @params[:r]
   end
 
   def self.l?
-    @params[:l] || false
+    @params[:l]
   end
 end
