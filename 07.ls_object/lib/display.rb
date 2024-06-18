@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'normal_format'
+require_relative 'multi_column_format'
 require_relative 'long_format'
 require_relative 'option'
 
@@ -13,7 +13,7 @@ class Display
     if Option.l?
       puts LongFormat.new(@file_names).fit_in
     else
-      puts NormalFormat.new(@file_names).fit_in
+      puts MultiColumnFormat.new(@file_names).fit_in
     end
   end
 end
