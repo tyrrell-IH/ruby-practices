@@ -7,7 +7,7 @@ require 'optparse'
 
 def main
   options = parse_options
-  file_names = options[:a] ? Dir.glob('*', File::FNM_DOTMATCH) : Dir.glob('*')
+  file_names = Dir.glob('*', options[:a] ? File::FNM_DOTMATCH : 0)
   file_names.reverse! if options[:r]
   choose_format(file_names, l_option: options[:l])
 end
