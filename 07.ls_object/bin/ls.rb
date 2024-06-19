@@ -9,7 +9,7 @@ def main
   options = parse_options
   file_names = Dir.glob('*', options[:a] ? File::FNM_DOTMATCH : 0)
   file_names.reverse! if options[:r]
-  choose_format(file_names, l_option: options[:l])
+  choose_format(file_names, long_format: options[:l])
 end
 
 def parse_options
@@ -22,8 +22,8 @@ def parse_options
   params
 end
 
-def choose_format(file_names, l_option:)
-  if l_option
+def choose_format(file_names, long_format:)
+  if long_format
     puts LongFormat.new(file_names).fit_in
   else
     puts MultiColumnFormat.new(file_names).fit_in
