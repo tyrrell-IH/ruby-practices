@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'content'
+require_relative 'directory_content'
 
 class LongFormat
   def initialize(file_names)
@@ -14,7 +14,7 @@ class LongFormat
 
   def fit_in
     @file_names.map do |file_name|
-      content = Content.new(file_name)
+      content = DirectoryContent.new(file_name)
       format(
         "%<mode>s\s\s%<links>s\s%<owner>s\s\s%<group>s\s\s%<bytes>s\s%<date>s\s%<pass>s",
         mode: content.file_mode,
@@ -32,13 +32,13 @@ class LongFormat
 
   def calc_width
     @file_names.map do |file_name|
-      yield Content.new(file_name)
+      yield DirectoryContent.new(file_name)
     end.max_by(&:length).length
   end
 
   def calc_total_number_of_blocks
     @file_names.inject(0) do |total, file_name|
-      total + Content.new(file_name).number_of_blocks
+      total + DirectoryContent.new(file_name).number_of_blocks
     end
   end
 end

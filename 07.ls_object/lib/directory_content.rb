@@ -3,7 +3,7 @@
 require 'etc'
 require 'date'
 
-class Content
+class DirectoryContent
   PERMISSION = {
     '0' => '---',
     '1' => '--x',
