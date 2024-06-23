@@ -53,11 +53,12 @@ class DirectoryContent
 
   def last_modified_date
     modified_time = @file_stat.mtime
-    if modified_time.to_date.between?(Date.today.prev_month(6), Date.today)
-      modified_time.strftime("%_m\s%e\s%H:%M")
-    else
-      modified_time.strftime("%_m\s%e\s\s%Y")
-    end
+    format = if modified_time.to_date.between?(Date.today.prev_month(6), Date.today)
+               "%_m\s%e\s%H:%M"
+             else
+               "%_m\s%e\s\s%Y"
+             end
+    modified_time.strftime(format)
   end
 
   def path_name
