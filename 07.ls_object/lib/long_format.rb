@@ -32,8 +32,8 @@ class LongFormat
 
   def calc_width
     @file_names.map do |file_name|
-      yield DirectoryContent.new(file_name)
-    end.max_by(&:length).length
+      yield(DirectoryContent.new(file_name)).length
+    end.max
   end
 
   def calc_total_number_of_blocks
