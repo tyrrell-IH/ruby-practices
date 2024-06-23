@@ -23,11 +23,8 @@ def parse_options
 end
 
 def choose_format(file_names, long_format:)
-  if long_format
-    puts LongFormat.new(file_names).fit_in
-  else
-    puts MultiColumnFormat.new(file_names).fit_in
-  end
+  format_class = long_format ? LongFormat : MultiColumnFormat
+  puts format_class.new(file_names).fit_in
 end
 
 main
